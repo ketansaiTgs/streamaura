@@ -131,6 +131,7 @@ const WatchStream: React.FC = () => {
           </div>
 
           <div className="bg-black aspect-video rounded-lg overflow-hidden">
+            asdsad
             <video id="remoteVideo" autoPlay controls playsInline className="w-full h-full"></video>
           </div>
 

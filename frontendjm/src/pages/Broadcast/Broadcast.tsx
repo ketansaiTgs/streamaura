@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Play, Square, Users, Eye, Clock, Settings } from 'lucide-react';
 import { streamService, viewerService } from '../../services/api';
+import { AuthContext } from '../../contexts/AuthContext';
+
 
 interface Stream {
   id: string;
@@ -26,6 +28,9 @@ const Broadcast: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [startingStream, setStartingStream] = useState(false);
   const [endingStream, setEndingStream] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const {transcript, isListening, startListening, stopListening} = useContext(AuthContext)
+
 
   useEffect(() => {
     if (streamId) {
@@ -106,6 +111,8 @@ const Broadcast: React.FC = () => {
     try {
       await streamService.startStream(streamId!);
       setIsLive(true);
+      setIsStreaming(true);
+      startListening();
       setStream(prev => prev ? { ...prev, status: 'live', startedAt: new Date().toISOString() } : null);
     } catch (error) {
       console.error('Error starting stream:', error);
@@ -117,6 +124,7 @@ const Broadcast: React.FC = () => {
   const handleEndStream = async () => {
     if (window.confirm('Are you sure you want to end this stream?')) {
       setEndingStream(true);
+      stopListening()
       try {
         await streamService.endStream(streamId!);
         setIsLive(false);
@@ -180,14 +188,16 @@ const Broadcast: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-black rounded-lg aspect-video flex items-center justify-center">
+          <div id="video-container" className="bg-black rounded-lg aspect-video flex items-center justify-center">
             <video
+            id="video"
               ref={videoRef}
               autoPlay
               muted
               playsInline
               className="w-full h-full object-cover rounded-lg"
             />
+            <div id="subtitle">{transcript}</div>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6">
@@ -274,3 +284,5 @@ const Broadcast: React.FC = () => {
 };
 
 export default Broadcast;
+
+
