@@ -12,7 +12,7 @@ getDatabase();
 
 // Import routes
 const authRoutes = require('./routes/auth.routes');
-const channelRoutes = require('./routes/channel.routes');
+const channelRoutes = require('./routes/channel.routes'); 
 const streamRoutes = require('./routes/stream.routes');
 const viewerRoutes = require('./routes/viewer.routes');
 const chatRoutes = require('./routes/chat.routes');
